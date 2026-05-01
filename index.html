@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para mi artista favorita 🎵</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Tenor+Sans&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --violet:    #6b3fa0;
+  --violet-lt: #9b6fd4;
+  --violet-xs: #e8d9f8;
+  --plum:      #3b1f5e;
+  --white:     #fefcff;
+  --off:       #f5f0fc;
+  --muted:     #a089c0;
+  --gold:      #c9a84c;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--white);
+  color: var(--plum);
+  font-family: 'Tenor Sans', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp   { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+@keyframes float    { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+@keyframes spin     { to{transform:rotate(360deg)} }
+@keyframes shimmer  { 0%,100%{opacity:.4} 50%{opacity:1} }
+@keyframes heartbeat{ 0%,100%{transform:scale(1)} 14%{transform:scale(1.2)} 28%{transform:scale(1)} 42%{transform:scale(1.1)} }
+@keyframes noteIn   { from{opacity:0;transform:scale(.8) rotate(-4deg)} to{opacity:1} }
+@keyframes blink    { 0%,100%{opacity:1} 50%{opacity:.2} }
+@keyframes rise     { from{opacity:0;transform:translateY(60px) scale(.95)} to{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes musicNote{ 0%{opacity:0;transform:translateY(0) rotate(-10deg) scale(.8)}
+                      30%{opacity:1}
+                      100%{opacity:0;transform:translateY(-80px) rotate(15deg) scale(1.1)} }
+
+/* ── LOCK ANIMATIONS ── */
+@keyframes lockShake {
+  0%,100%{transform:translateX(0) rotate(0deg)}
+  15%{transform:translateX(-4px) rotate(-2deg)}
+  30%{transform:translateX(4px) rotate(2deg)}
+  45%{transform:translateX(-3px) rotate(-1deg)}
+  60%{transform:translateX(3px) rotate(1deg)}
+  75%{transform:translateX(-2px) rotate(-1deg)}
+}
+@keyframes lockGlow {
+  0%,100%{box-shadow:0 0 20px rgba(107,63,160,.15), 0 0 0 0 rgba(107,63,160,.1)}
+  50%{box-shadow:0 0 40px rgba(107,63,160,.3), 0 0 60px rgba(107,63,160,.08)}
+}
+@keyframes lockPulse {
+  0%,100%{opacity:.5;transform:scale(1)}
+  50%{opacity:.8;transform:scale(1.05)}
+}
+@keyframes starFloat {
+  0%{opacity:0;transform:translateY(0) rotate(0deg) scale(0)}
+  20%{opacity:1;transform:translateY(-10px) rotate(45deg) scale(1)}
+  100%{opacity:0;transform:translateY(-40px) rotate(90deg) scale(.5)}
+}
+@keyframes countdownPop {
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.04)}
+}
+@keyframes shimmerBar {
+  0%{background-position:200% center}
+  100%{background-position:-200% center}
+}
+@keyframes progressFill {
+  from{width:0%}
+  to{width:var(--progress,0%)}
+}
+@keyframes digitFlip {
+  0%{transform:translateY(-100%);opacity:0}
+  100%{transform:translateY(0);opacity:1}
+}
+
+/* ── BACKGROUND TEXTURE ── */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse at 10% 20%, rgba(107,63,160,.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 80%, rgba(107,63,160,.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(232,217,248,.3) 0%, transparent 70%);
+  pointer-events:none; z-index:0;
+}
+
+/* ── FLOATING NOTES ── */
+.music-notes { position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
+.mnote {
+  position:absolute; font-size:1.2rem; opacity:0;
+  animation:musicNote var(--d,4s) ease-in var(--delay,0s) infinite;
+  color: rgba(107,63,160,.25);
+}
+
+/* ── HERO ── */
+.hero {
+  position:relative; min-height:100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:3rem 2rem; z-index:2;
+  background: linear-gradient(160deg, var(--plum) 0%, #4a2680 40%, var(--violet) 100%);
+  overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; inset:0;
+  background: radial-gradient(ellipse at 50% 30%, rgba(155,111,212,.4), transparent 60%);
+}
+.hero::after {
+  content:''; position:absolute; bottom:-2px; left:0; right:0; height:80px;
+  background: var(--white);
+  clip-path: ellipse(55% 100% at 50% 100%);
+}
+
+.orb {
+  position:absolute; border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle, rgba(155,111,212,.3), transparent);
+  animation:float var(--fd,6s) ease-in-out infinite var(--fdelay,0s);
+}
+
+.hero-eyebrow {
+  font-family:'Caveat',cursive; font-size:1.1rem; letter-spacing:.15em;
+  color:rgba(232,217,248,.7); margin-bottom:1.5rem;
+  opacity:0; animation:fadeUp .8s ease .4s forwards;
+}
+.hero-title {
+  font-family:'Cormorant',serif; font-size:clamp(3rem,10vw,6.5rem);
+  font-weight:300; font-style:italic; line-height:1.05;
+  color:#fff; margin-bottom:1rem;
+  opacity:0; animation:fadeUp .8s ease .6s forwards;
+}
+.hero-title em { color:var(--violet-xs); font-style:normal; font-weight:600; display:block; }
+.hero-name {
+  font-family:'Cormorant',serif; font-size:clamp(1.5rem,5vw,3rem);
+  font-weight:300; color:rgba(232,217,248,.85);
+  opacity:0; animation:fadeUp .8s ease .8s forwards; margin-bottom:2rem;
+}
+.hero-quote {
+  font-size:clamp(.9rem,2vw,1.1rem); color:rgba(232,217,248,.7);
+  font-style:italic; max-width:560px; line-height:1.8;
+  opacity:0; animation:fadeUp .8s ease 1s forwards;
+}
+.hero-scroll {
+  position:absolute; bottom:5rem; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:.5rem;
+  color:rgba(232,217,248,.5); font-size:.75rem; letter-spacing:.2em;
+  opacity:0; animation:fadeUp .8s ease 1.4s forwards;
+}
+.hero-scroll::after {
+  content:''; width:1px; height:50px;
+  background:linear-gradient(to bottom,rgba(232,217,248,.4),transparent);
+  animation:shimmer 2s ease infinite;
+}
+
+/* ── SECTION GENERIC ── */
+.sec { position:relative; z-index:2; padding:5rem 2rem; max-width:960px; margin:0 auto; }
+.sec-title {
+  font-family:'Cormorant',serif; font-size:clamp(2rem,5vw,3.5rem);
+  font-weight:300; font-style:italic; color:var(--violet); text-align:center; margin-bottom:.5rem;
+}
+.sec-title em { color:var(--plum); font-style:normal; font-weight:600; }
+.sec-sub { text-align:center; color:var(--muted); font-size:.8rem; letter-spacing:.3em; text-transform:uppercase; margin-bottom:3rem; }
+.divider { text-align:center; padding:2rem; font-size:1.3rem; letter-spacing:.5rem; opacity:.4; position:relative; z-index:2; }
+
+/* ── MONTH CARDS ── */
+.months-wrap { display:flex; flex-direction:column; gap:3rem; }
+
+.month-card {
+  background:#fff; border-radius:24px; overflow:hidden;
+  box-shadow:0 4px 40px rgba(107,63,160,.1);
+  border:1px solid var(--violet-xs);
+  animation:rise .6s ease both;
+}
+.month-header {
+  background:linear-gradient(135deg, var(--plum), var(--violet));
+  padding:2rem 2.5rem; display:flex; align-items:center; gap:1.5rem;
+}
+.month-badge {
+  width:64px; height:64px; border-radius:50%;
+  background:rgba(255,255,255,.15); border:2px solid rgba(255,255,255,.3);
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.month-badge span { font-family:'Cormorant',serif; font-size:1.5rem; font-weight:600; color:#fff; }
+.month-info h3 { font-family:'Cormorant',serif; font-size:1.8rem; font-weight:300; font-style:italic; color:#fff; }
+.month-info p  { color:rgba(232,217,248,.75); font-size:.85rem; letter-spacing:.1em; margin-top:.2rem; }
+.month-new { background:var(--gold); color:#fff; font-size:.65rem; letter-spacing:.15em; text-transform:uppercase; padding:.25rem .7rem; border-radius:50px; margin-left:auto; white-space:nowrap; }
+
+.month-body { padding:2rem 2.5rem; display:flex; flex-direction:column; gap:2rem; }
+.month-msg {
+  font-family:'Cormorant',serif; font-size:1.15rem; font-style:italic;
+  line-height:1.8; color:var(--plum);
+  border-left:3px solid var(--violet-xs); padding-left:1.2rem;
+}
+
+.month-notes-title {
+  font-size:.75rem; letter-spacing:.3em; color:var(--muted);
+  text-transform:uppercase; margin-bottom:1rem;
+  display:flex; align-items:center; gap:.5rem;
+}
+.month-notes-title::after { content:''; flex:1; height:1px; background:var(--violet-xs); }
+
+.notes-row { display:flex; gap:.8rem; margin-bottom:1rem; flex-wrap:wrap; align-items:flex-end; }
+.notes-textarea {
+  flex:1; min-width:180px; background:var(--off);
+  border:1px solid var(--violet-xs); border-radius:12px; padding:.9rem 1rem;
+  color:var(--plum); font-family:'Caveat',cursive; font-size:1.05rem;
+  resize:none; min-height:80px; outline:none; transition:border-color .3s;
+}
+.notes-textarea:focus { border-color:var(--violet-lt); }
+.notes-textarea::placeholder { color:var(--muted); opacity:.6; }
+.notes-controls { display:flex; flex-direction:column; gap:.6rem; }
+.color-pick { display:flex; gap:.4rem; flex-wrap:wrap; align-items:center; }
+.color-lbl  { font-size:.75rem; color:var(--muted); }
+.color-dot  {
+  width:22px; height:22px; border-radius:50%; cursor:pointer;
+  border:2px solid transparent; transition:transform .2s,border-color .2s; outline:none;
+}
+.color-dot:hover,.color-dot.active { transform:scale(1.35); border-color:var(--plum); }
+.add-btn {
+  background:linear-gradient(135deg,var(--violet),var(--plum));
+  border:none; border-radius:50px; padding:.7rem 1.5rem;
+  color:#fff; font-family:'Tenor Sans',sans-serif; font-size:.9rem;
+  cursor:pointer; white-space:nowrap; transition:transform .2s,box-shadow .2s;
+}
+.add-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(107,63,160,.35); }
+
+.notes-board { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1rem; }
+.note-card {
+  border-radius:4px 14px 14px 14px; padding:1.2rem 1rem;
+  position:relative; min-height:110px;
+  box-shadow:3px 5px 16px rgba(0,0,0,.12);
+  animation:noteIn .35s ease; cursor:default;
+  transition:transform .3s;
+}
+.note-card:hover { transform:scale(1.04) rotate(0deg) !important; }
+.note-card:hover .note-del { opacity:1 !important; }
+.note-pin { position:absolute; top:-10px; left:10px; font-size:1rem; }
+.note-del {
+  position:absolute; top:.3rem; right:.5rem; background:none; border:none;
+  cursor:pointer; font-size:.8rem; opacity:0; transition:opacity .2s; color:rgba(0,0,0,.35);
+}
+.note-text { font-family:'Caveat',cursive; font-size:1.05rem; line-height:1.55; color:#2a1a40; word-break:break-word; padding-top:.3rem; }
+.note-date { position:absolute; bottom:.5rem; right:.7rem; font-family:'Caveat',cursive; font-size:.7rem; color:rgba(42,26,64,.4); }
+.notes-empty { text-align:center; color:var(--muted); font-style:italic; padding:1.5rem; font-size:.9rem; border:1px dashed var(--violet-xs); border-radius:12px; }
+
+.upload-area {
+  border:2px dashed rgba(107,63,160,.25); border-radius:16px; padding:1.8rem;
+  text-align:center; cursor:pointer; transition:border-color .3s,background .3s;
+  margin-bottom:1rem; position:relative; background:var(--off);
+}
+.upload-area:hover { border-color:var(--violet-lt); background:rgba(107,63,160,.04); }
+.upload-area input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+.upload-text { font-size:.9rem; color:var(--muted); font-style:italic; line-height:1.6; }
+.upload-text strong { color:var(--violet); }
+.photo-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:.7rem; }
+.photo-item { position:relative; border-radius:10px; overflow:hidden; aspect-ratio:1; background:var(--violet-xs); transition:transform .3s; }
+.photo-item:hover { transform:scale(1.05); }
+.photo-item img { width:100%; height:100%; object-fit:cover; display:block; }
+.photo-del {
+  position:absolute; top:.3rem; right:.3rem;
+  background:rgba(59,31,94,.7); border:none; border-radius:50%;
+  width:22px; height:22px; color:#fff; cursor:pointer; font-size:.7rem;
+  opacity:0; transition:opacity .2s; display:flex; align-items:center; justify-content:center;
+}
+.photo-item:hover .photo-del { opacity:1; }
+.photo-caption {
+  position:absolute; bottom:0; left:0; right:0;
+  background:rgba(59,31,94,.65); border:none; padding:.3rem .5rem;
+  color:#fff; font-family:'Caveat',cursive; font-size:.85rem; width:100%; outline:none;
+}
+.photo-caption::placeholder { color:rgba(255,255,255,.45); }
+.photos-empty { color:var(--muted); font-style:italic; font-size:.85rem; text-align:center; padding:.5rem; }
+
+/* ── PRAISE SECTION ── */
+.praise-section {
+  position:relative; z-index:2; padding:5rem 2rem;
+  background:linear-gradient(160deg,var(--off),rgba(232,217,248,.5));
+  overflow:hidden;
+}
+.praise-section::before {
+  content:''; position:absolute; top:-60px; right:-60px;
+  width:300px; height:300px; border-radius:50%;
+  background:radial-gradient(circle,rgba(107,63,160,.08),transparent);
+  pointer-events:none;
+}
+.praise-inner { max-width:900px; margin:0 auto; }
+.praise-intro {
+  font-family:'Cormorant',serif; font-size:clamp(1.1rem,2.5vw,1.5rem);
+  font-style:italic; color:var(--plum); text-align:center;
+  max-width:650px; margin:0 auto 4rem; line-height:1.8;
+}
+.praise-intro em { color:var(--violet); font-style:normal; font-weight:600; }
+
+.talents-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1.5rem; margin-bottom:4rem; }
+.talent-card {
+  background:#fff; border-radius:20px; padding:2rem 1.8rem;
+  border:1px solid var(--violet-xs); position:relative; overflow:hidden;
+  box-shadow:0 4px 24px rgba(107,63,160,.08);
+  transition:transform .3s,box-shadow .3s;
+}
+.talent-card:hover { transform:translateY(-6px); box-shadow:0 12px 40px rgba(107,63,160,.15); }
+.talent-card::before {
+  content:''; position:absolute; top:-40px; right:-40px;
+  width:120px; height:120px; border-radius:50%;
+  background:radial-gradient(circle,rgba(107,63,160,.07),transparent);
+}
+.talent-icon { font-size:2.8rem; margin-bottom:1rem; display:block; animation:float var(--fd,4s) ease-in-out infinite var(--fdelay,0s); }
+.talent-title { font-family:'Cormorant',serif; font-size:1.5rem; font-weight:600; color:var(--plum); margin-bottom:.6rem; }
+.talent-desc  { font-size:.95rem; line-height:1.75; color:var(--muted); font-style:italic; }
+
+.eyes-card {
+  background:linear-gradient(135deg,var(--plum),var(--violet));
+  border-radius:24px; padding:3rem 2.5rem; text-align:center;
+  position:relative; overflow:hidden; margin-bottom:2rem;
+  box-shadow:0 8px 40px rgba(59,31,94,.3);
+}
+.eyes-card::before { content:'✦'; position:absolute; top:1rem; left:2rem; font-size:1.5rem; color:rgba(232,217,248,.2); }
+.eyes-card::after  { content:'✦'; position:absolute; bottom:1rem; right:2rem; font-size:1.5rem; color:rgba(232,217,248,.2); }
+.eyes-emoji { font-size:3.5rem; display:block; margin-bottom:1rem; animation:float 3s ease-in-out infinite; }
+.eyes-quote {
+  font-family:'Cormorant',serif; font-size:clamp(1.2rem,3vw,2rem);
+  font-style:italic; color:#fff; line-height:1.5; max-width:500px; margin:0 auto .8rem;
+}
+.eyes-sub { color:rgba(232,217,248,.65); font-size:.9rem; letter-spacing:.1em; }
+.praise-closing {
+  font-family:'Cormorant',serif; font-size:clamp(1.1rem,2.5vw,1.6rem);
+  font-style:italic; color:var(--violet); text-align:center;
+  max-width:600px; margin:2rem auto 0; line-height:1.8;
+}
+
+/* ══════════════════════════════════════
+   LOCKED CARD — DISEÑO MEJORADO
+══════════════════════════════════════ */
+.locked-card {
+  background: #fff;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid var(--violet-xs);
+  box-shadow: 0 4px 40px rgba(107,63,160,.08);
+  animation: rise .6s ease both;
+  position: relative;
+}
+
+/* Header bloqueado */
+.locked-header {
+  background: linear-gradient(135deg, #1e1030, #2d1a50);
+  padding: 2rem 2.5rem;
+  display: flex; align-items: center; gap: 1.5rem;
+}
+.locked-badge {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: rgba(255,255,255,.06);
+  border: 2px solid rgba(255,255,255,.12);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.locked-badge span {
+  font-family:'Cormorant',serif; font-size:1.5rem; font-weight:600;
+  color:rgba(255,255,255,.25);
+}
+.locked-header-info h3 {
+  font-family:'Cormorant',serif; font-size:1.8rem; font-weight:300;
+  font-style:italic; color:rgba(255,255,255,.3);
+}
+.locked-header-info p {
+  color:rgba(232,217,248,.2); font-size:.85rem; letter-spacing:.1em; margin-top:.2rem;
+}
+
+/* Body bloqueado */
+.locked-body {
+  padding: 3.5rem 2.5rem;
+  display: flex; flex-direction: column; align-items: center;
+  background: linear-gradient(180deg, #fdfbff 0%, #f5f0fc 100%);
+  position: relative; overflow: hidden;
+}
+
+/* Estrellas decorativas de fondo */
+.locked-body::before {
+  content: '✦  ✦  ✦  ✦  ✦';
+  position: absolute; top: 1.5rem; left: 0; right: 0;
+  text-align: center; font-size: .7rem;
+  color: rgba(107,63,160,.1); letter-spacing: 1.5rem;
+  pointer-events: none;
+}
+.locked-body::after {
+  content: '✦  ✦  ✦  ✦  ✦';
+  position: absolute; bottom: 1.5rem; left: 0; right: 0;
+  text-align: center; font-size: .7rem;
+  color: rgba(107,63,160,.1); letter-spacing: 1.5rem;
+  pointer-events: none;
+}
+
+/* ── CANDADO SVG ── */
+.lock-wrap {
+  position: relative;
+  margin-bottom: 2rem;
+  cursor: default;
+}
+.lock-wrap:hover .lock-svg { animation: lockShake .5s ease; }
+
+.lock-svg {
+  width: 80px; height: 80px;
+  filter: drop-shadow(0 8px 24px rgba(107,63,160,.25));
+  transition: transform .3s;
+}
+
+/* Círculo pulsante detrás del candado */
+.lock-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  border: 2px solid rgba(107,63,160,.15);
+  animation: lockGlow 3s ease-in-out infinite;
+  pointer-events: none;
+}
+.lock-ring-2 {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 124px; height: 124px;
+  border-radius: 50%;
+  border: 1px solid rgba(107,63,160,.07);
+  animation: lockGlow 3s ease-in-out infinite .8s;
+  pointer-events: none;
+}
+
+/* Partículas flotantes alrededor del lock */
+.lock-particles { position:absolute; inset:-30px; pointer-events:none; }
+.lock-particle {
+  position:absolute; font-size:.7rem;
+  animation: starFloat var(--dur,3s) ease-in-out infinite var(--del,0s);
+  opacity:0;
+}
+
+/* Título del mes bloqueado */
+.locked-title {
+  font-family:'Cormorant',serif; font-size:1.6rem; font-weight:600;
+  color: var(--plum); margin-bottom:.5rem; text-align:center;
+  opacity: .5;
+}
+.locked-subtitle {
+  color: var(--muted); font-size: .9rem; line-height:1.7;
+  text-align: center; margin-bottom: 2.5rem;
+  max-width: 380px;
+}
+.locked-subtitle strong { color: var(--violet); font-weight: 600; }
+
+/* ── COUNTDOWN ── */
+.countdown-wrap {
+  background: linear-gradient(135deg, var(--plum), var(--violet));
+  border-radius: 20px; padding: 2rem 2.5rem;
+  width: 100%; max-width: 380px;
+  position: relative; overflow: hidden;
+  box-shadow: 0 8px 32px rgba(59,31,94,.25);
+  animation: lockGlow 3s ease-in-out infinite;
+}
+.countdown-wrap::before {
+  content:'';
+  position:absolute; inset:0;
+  background: linear-gradient(45deg,
+    transparent 30%,
+    rgba(255,255,255,.04) 50%,
+    transparent 70%
+  );
+  background-size: 200% 200%;
+  animation: shimmerBar 4s linear infinite;
+}
+.countdown-label {
+  font-size: .65rem; letter-spacing: .3em; text-transform: uppercase;
+  color: rgba(232,217,248,.5); text-align:center; margin-bottom: 1.2rem;
+  display:flex; align-items:center; gap:.5rem; justify-content:center;
+}
+.countdown-label::before, .countdown-label::after {
+  content:''; flex:1; height:1px; background:rgba(232,217,248,.15); max-width:60px;
+}
+.countdown-digits {
+  display: flex; align-items: center; justify-content:center;
+  gap: .5rem; margin-bottom: 1rem;
+}
+.digit-block {
+  display:flex; flex-direction:column; align-items:center; gap:.3rem;
+}
+.digit-num {
+  font-family:'Cormorant',serif; font-size:2.6rem; font-weight:700;
+  color:#fff; line-height:1; min-width:2.5ch; text-align:center;
+  animation: countdownPop 1s ease-in-out infinite;
+  text-shadow: 0 2px 12px rgba(155,111,212,.5);
+}
+.digit-lbl {
+  font-size: .55rem; letter-spacing: .2em; text-transform: uppercase;
+  color: rgba(232,217,248,.45);
+}
+.digit-sep {
+  font-family:'Cormorant',serif; font-size: 2.2rem; font-weight: 300;
+  color: rgba(232,217,248,.3); line-height:1; margin-bottom:1.4rem;
+}
+
+/* Progress bar de días */
+.progress-wrap { margin-top: .5rem; }
+.progress-bar {
+  height: 3px; background: rgba(255,255,255,.1);
+  border-radius: 2px; overflow:hidden; margin-bottom: .4rem;
+}
+.progress-fill {
+  height:100%;
+  background: linear-gradient(90deg, var(--violet-xs), #fff);
+  border-radius:2px;
+  transition: width .3s ease;
+}
+.progress-text {
+  font-size:.65rem; color:rgba(232,217,248,.35);
+  text-align:center; letter-spacing:.1em;
+}
+
+/* ── SIMPLE LOCKED (meses futuros, sin cuenta) ── */
+.simple-locked-body {
+  padding: 2.5rem 2.5rem;
+  display: flex; flex-direction:column; align-items:center;
+  background: linear-gradient(180deg, #fdfbff 0%, #f5f0fc 100%);
+  position:relative; overflow:hidden;
+}
+.simple-lock-wrap {
+  display:flex; flex-direction:column; align-items:center; gap:1rem;
+  opacity: .45;
+  animation: lockPulse 4s ease-in-out infinite;
+}
+.simple-lock-svg { width:48px; height:48px; filter:drop-shadow(0 4px 12px rgba(107,63,160,.2)); }
+.simple-locked-text {
+  font-family:'Cormorant',serif; font-size:1.2rem; font-style:italic;
+  color:rgba(107,63,160,.4); text-align:center; margin-top:.2rem;
+}
+.simple-unlock-date {
+  font-size:.75rem; color:var(--muted); letter-spacing:.1em;
+  margin-top:.3rem; opacity:.6; text-align:center;
+}
+
+/* ── FINAL ── */
+.final-section {
+  position:relative; z-index:2;
+  background:linear-gradient(160deg,var(--plum),var(--violet));
+  padding:6rem 2rem; text-align:center; margin-top:4rem;
+  clip-path:ellipse(100% 100% at 50% 100%);
+  padding-top:8rem;
+}
+.heart-big { font-size:3.5rem; display:block; animation:heartbeat 1.5s ease infinite; margin-bottom:2rem; }
+.final-quote {
+  font-family:'Cormorant',serif; font-size:clamp(1.3rem,4vw,2.2rem);
+  font-style:italic; color:#fff; max-width:580px; margin:0 auto 1.5rem; line-height:1.5;
+}
+.final-sig { color:rgba(232,217,248,.7); font-size:.9rem; letter-spacing:.2em; }
+
+/* ── STATUS TOAST ── */
+.toast {
+  position:fixed; bottom:2rem; right:2rem; z-index:100;
+  background:var(--plum); color:#fff; padding:.8rem 1.5rem;
+  border-radius:50px; font-size:.9rem; opacity:0;
+  transform:translateY(20px); transition:opacity .3s,transform .3s;
+  pointer-events:none; box-shadow:0 4px 20px rgba(59,31,94,.4);
+}
+.toast.show { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="music-notes" id="music-notes"></div>
+<div class="toast" id="toast">✓ Guardado 💜</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="orb" style="width:300px;height:300px;top:-80px;right:-60px;--fd:7s;--fdelay:0s"></div>
+  <div class="orb" style="width:200px;height:200px;bottom:80px;left:-40px;--fd:9s;--fdelay:2s"></div>
+  <div class="orb" style="width:150px;height:150px;top:40%;left:10%;--fd:5s;--fdelay:1s"></div>
+
+  <p class="hero-eyebrow">✦ nuestra historia de amor ✦</p>
+  <h1 class="hero-title">
+    Para mi<br>
+    <em>artista favorita</em>
+  </h1>
+  <p class="hero-name">Angela 🎵</p>
+  <p class="hero-quote">
+    "Este tiempo que te he conocido me siento bien a tu lado<br>
+    y siempre voy a estar contigo, pase lo que pase."
+  </p>
+  <div class="hero-scroll">descubre</div>
+</section>
+
+<!-- ── PRAISE ── -->
+<section class="praise-section">
+  <div class="praise-inner">
+    <h2 class="sec-title" style="margin-bottom:.5rem">Lo que me <em>encanta</em> de ti</h2>
+    <p class="sec-sub" style="margin-bottom:2.5rem">✦ todo, absolutamente todo ✦</p>
+
+    <p class="praise-intro">
+      Angela, eres una de esas personas que lo hacen todo con una <em>gracia</em> que no se puede explicar.
+      Cada cosa que haces me deja sin palabras. Eres increíblemente talentosa
+      y ni siquiera creo que te das cuenta de cuánto.
+    </p>
+
+    <div class="talents-grid">
+      <div class="talent-card">
+        <span class="talent-icon" style="--fd:4s;--fdelay:0s">🎵</span>
+        <div class="talent-title">La música</div>
+        <p class="talent-desc">Cuando tocas, el mundo se detiene. Tienes algo en la música que no se aprende — nace contigo. Me encanta escucharte y ver cómo te emocionas porque te estoy escuchando :3</p>
+      </div>
+      <div class="talent-card">
+        <span class="talent-icon" style="--fd:5s;--fdelay:.5s">🗿</span>
+        <div class="talent-title">La escultura</div>
+        <p class="talent-desc">Tomar algo sin forma y convertirlo en algo hermoso con tus propias manos… eso es magia pura. Aunque todavía no me lo hayas mostrado en persona, ya me tiene impresionado.</p>
+      </div>
+      <div class="talent-card">
+        <span class="talent-icon" style="--fd:4.5s;--fdelay:1s">🪵</span>
+        <div class="talent-title">La carpintería</div>
+        <p class="talent-desc">¿Quién más puede hacer lo que haces tú? La carpintería en tus manos se vuelve algo especial. Me parece tan único y tan tuyo que no puedo evitar admirarte cada vez más.</p>
+      </div>
+      <div class="talent-card">
+        <span class="talent-icon" style="--fd:6s;--fdelay:.3s">✨</span>
+        <div class="talent-title">Toda tú</div>
+        <p class="talent-desc">Pero más allá de todo lo que haces, eres tú la que me tiene así. Tu forma de ser, de reír, de ver el mundo. Eres buena para todo porque eres buena persona, y eso vale más que cualquier talento.</p>
+      </div>
+    </div>
+
+    <div class="eyes-card">
+      <span class="eyes-emoji">👀💜</span>
+      <p class="eyes-quote">"Y esos ojitos tuyos… no sé cómo explicarlo, pero cada vez que te miro me pierdo un poquito."</p>
+      <p class="eyes-sub">hay cosas que las palabras no alcanzan a decir</p>
+    </div>
+
+    <p class="praise-closing">
+      "Me encanta cada una de las cosas que haces, Angela.
+      Pero sobre todo me encanta que existas y que hayas llegado a mi vida."
+    </p>
+  </div>
+</section>
+
+<div class="divider">💜 · · · 💜</div>
+
+<!-- ── MONTHS ── -->
+<section class="sec">
+  <h2 class="sec-title">Nuestra <em>historia</em></h2>
+  <p class="sec-sub">✦ cada mes, un nuevo capítulo ✦</p>
+  <div class="months-wrap" id="months-wrap"></div>
+</section>
+
+<div class="divider">💜 · · · 💜</div>
+
+<!-- ── FINAL ── -->
+<section class="final-section">
+  <span class="heart-big">💜</span>
+  <p class="final-quote">"Eres mi canción favorita, Angela. La que siempre quiero escuchar."</p>
+  <p class="final-sig">con todo mi amor, siempre 🎵</p>
+</section>
+
+<script>
+// ── CONFIG ──
+const BIN_ID  = '69f523e9aaba8821975ef1fe';
+const API_KEY = '$2a$10$G7ZjjZkicUsWvoKH4Bz92O2gH4OHLWflec.twZ4LwF34X5h.hwgNK';
+const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+const IMGBB_KEY = '2575e1809fd410df2d2bf5fe3f745288';
+
+// ── START DATE: 19 de abril de 2026 ──
+// Mes 1 = 19 abr 2026, Mes 2 = 19 may 2026 ... Mes 12 = 19 mar 2027
+const START = new Date(2026, 3, 19, 0, 0, 0); // mes 3 = abril (0-indexed)
+
+const NOTE_COLORS = ['#e8d9f8','#fde4b0','#f9b8c4','#b8e4d4','#b8d4f9','#f9d4b8'];
+const ROTS = [-3,-2,-1,0,1,2,3];
+const ORDINALS = ['1er','2do','3er','4to','5to','6to','7mo','8vo','9no','10mo','11mo','12mo'];
+const MONTH_NAMES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+let db = {};
+
+// ── MUSIC NOTES ──
+(function(){
+  const el = document.getElementById('music-notes');
+  const symbols = ['♪','♫','♬','♩','🎵','🎶'];
+  for(let i=0;i<18;i++){
+    const n = document.createElement('span');
+    n.className = 'mnote';
+    n.textContent = symbols[i%symbols.length];
+    n.style.cssText = `left:${Math.random()*100}%;top:${60+Math.random()*35}%;--d:${3+Math.random()*4}s;--delay:${Math.random()*8}s`;
+    el.appendChild(n);
+  }
+})();
+
+// ── TOAST ──
+function showToast(msg='✓ Guardado 💜'){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+// ── JSONBIN ──
+async function getDB(){
+  try{
+    const res  = await fetch(BIN_URL+'/latest',{ headers:{'X-Master-Key':API_KEY} });
+    const data = await res.json();
+    const rec  = data.record || {};
+    if(rec.notas !== undefined || rec.fotos !== undefined){
+      db = { month_1: { notas: rec.notas||[], fotos: rec.fotos||[] } };
+    } else {
+      db = rec;
+    }
+  }catch(e){ console.error(e); }
+}
+async function putDB(){
+  try{
+    await fetch(BIN_URL,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json','X-Master-Key':API_KEY},
+      body: JSON.stringify(db)
+    });
+    showToast();
+  }catch(e){ showToast('Error al guardar 😢'); }
+}
+
+function getMonthData(key){ return db[key] || { notas:[], fotos:[] }; }
+function setMonthData(key, data){ db[key] = data; }
+
+// ── IMGBB ──
+async function uploadToImgBB(file){
+  const fd = new FormData();
+  fd.append('image', file);
+  const res  = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`,{ method:'POST', body:fd });
+  const data = await res.json();
+  if(data.success) return data.data.url;
+  throw new Error('ImgBB upload failed');
+}
+
+// ── HELPERS ──
+function isToday(d){
+  const now = new Date();
+  return d.getDate()===now.getDate() && d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
+}
+
+// ── LOCK SVG (grande, con color) ──
+function lockSVG(size=80, opacity=1){
+  return `<svg width="${size}" height="${size}" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:${opacity}">
+    <!-- Arco del candado -->
+    <path d="M24 34V26C24 17.163 31.163 10 40 10C48.837 10 56 17.163 56 26V34" 
+      stroke="url(#lockGrad)" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <!-- Cuerpo del candado -->
+    <rect x="16" y="34" width="48" height="36" rx="10" fill="url(#lockBodyGrad)" stroke="url(#lockGrad)" stroke-width="1.5"/>
+    <!-- Agujero de llave -->
+    <circle cx="40" cy="52" r="6" fill="rgba(255,255,255,0.2)"/>
+    <rect x="38" y="52" width="4" height="8" rx="2" fill="rgba(255,255,255,0.2)"/>
+    <defs>
+      <linearGradient id="lockGrad" x1="16" y1="10" x2="64" y2="70" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#9b6fd4"/>
+        <stop offset="100%" stop-color="#6b3fa0"/>
+      </linearGradient>
+      <linearGradient id="lockBodyGrad" x1="16" y1="34" x2="64" y2="70" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#7c4fb8"/>
+        <stop offset="100%" stop-color="#4a2680"/>
+      </linearGradient>
+    </defs>
+  </svg>`;
+}
+
+// ── LOCK SVG SIMPLE (pequeño, gris) ──
+function lockSVGSimple(size=48){
+  return `<svg width="${size}" height="${size}" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M24 34V26C24 17.163 31.163 10 40 10C48.837 10 56 17.163 56 26V34"
+      stroke="#a089c0" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <rect x="16" y="34" width="48" height="36" rx="10" fill="#c4b0d8" stroke="#a089c0" stroke-width="1.5"/>
+    <circle cx="40" cy="52" r="6" fill="rgba(255,255,255,0.35)"/>
+    <rect x="38" y="52" width="4" height="8" rx="2" fill="rgba(255,255,255,0.35)"/>
+  </svg>`;
+}
+
+// ── COUNTDOWN ──
+function startCountdown(unlockAt, cardEl){
+  // Calcular progreso total del mes
+  const prevUnlock = new Date(unlockAt);
+  prevUnlock.setMonth(prevUnlock.getMonth() - 1);
+  const totalMs = unlockAt - prevUnlock;
+
+  function update(){
+    const diff = unlockAt - Date.now();
+    if(diff <= 0){ renderAll(); return; }
+
+    const h = Math.floor(diff/3600000);
+    const m = Math.floor((diff%3600000)/60000);
+    const s = Math.floor((diff%60000)/1000);
+
+    const hEl = cardEl.querySelector('.d-h');
+    const mEl = cardEl.querySelector('.d-m');
+    const sEl = cardEl.querySelector('.d-s');
+    const pFill = cardEl.querySelector('.progress-fill');
+    const pText = cardEl.querySelector('.progress-text');
+
+    if(hEl) hEl.textContent = String(h).padStart(2,'0');
+    if(mEl) mEl.textContent = String(m).padStart(2,'0');
+    if(sEl) sEl.textContent = String(s).padStart(2,'0');
+
+    if(pFill){
+      const elapsed = totalMs - diff;
+      const pct = Math.min(100, Math.max(0, (elapsed/totalMs)*100));
+      pFill.style.width = pct.toFixed(1)+'%';
+    }
+    if(pText){
+      const daysLeft = Math.ceil(diff / 86400000);
+      pText.textContent = `faltan ${daysLeft} día${daysLeft!==1?'s':''} para el próximo capítulo`;
+    }
+  }
+  update();
+  const id = setInterval(()=>{ if(!document.body.contains(cardEl)){ clearInterval(id); return; } update(); }, 1000);
+}
+
+// ── LOCKED CARD CON CUENTA REGRESIVA ──
+function buildNextLockedCard(num, unlockDate){
+  const ord   = ORDINALS[num-1] || `${num}°`;
+  const mName = MONTH_NAMES[unlockDate.getMonth()];
+  const year  = unlockDate.getFullYear();
+
+  const card = document.createElement('div');
+  card.className = 'locked-card';
+  card.style.animationDelay = `${(num-1)*.1}s`;
+
+  // Header
+  const header = document.createElement('div');
+  header.className = 'locked-header';
+  header.innerHTML = `
+    <div class="locked-badge"><span>${num}</span></div>
+    <div class="locked-header-info">
+      <h3>${ord} mes juntos 💜</h3>
+      <p>19 ${mName} ${year}</p>
+    </div>
+  `;
+  card.appendChild(header);
+
+  // Body
+  const body = document.createElement('div');
+  body.className = 'locked-body';
+
+  body.innerHTML = `
+    <div class="lock-wrap">
+      <div class="lock-ring"></div>
+      <div class="lock-ring-2"></div>
+      <div class="lock-particles">
+        <span class="lock-particle" style="top:10%;left:20%;--dur:3.2s;--del:0s">✦</span>
+        <span class="lock-particle" style="top:20%;right:15%;--dur:4s;--del:.5s">♪</span>
+        <span class="lock-particle" style="bottom:15%;left:25%;--dur:3.5s;--del:1s">💜</span>
+        <span class="lock-particle" style="bottom:10%;right:20%;--dur:2.8s;--del:1.5s">✦</span>
+        <span class="lock-particle" style="top:50%;left:5%;--dur:3.8s;--del:.3s">♫</span>
+        <span class="lock-particle" style="top:50%;right:5%;--dur:3s;--del:.8s">✦</span>
+      </div>
+      <div class="lock-svg">${lockSVG(80)}</div>
+    </div>
+
+    <h3 class="locked-title">Próximo capítulo</h3>
+    <p class="locked-subtitle">
+      Este mes se desbloqueará el <strong>19 de ${mName} de ${year}</strong> a las 12:00 am 💜<br>
+      mientras tanto… seguimos sumando momentos bonitos.
+    </p>
+
+    <div class="countdown-wrap">
+      <div class="countdown-label">tiempo restante</div>
+      <div class="countdown-digits">
+        <div class="digit-block">
+          <div class="digit-num d-h">00</div>
+          <div class="digit-lbl">horas</div>
+        </div>
+        <div class="digit-sep">:</div>
+        <div class="digit-block">
+          <div class="digit-num d-m">00</div>
+          <div class="digit-lbl">min</div>
+        </div>
+        <div class="digit-sep">:</div>
+        <div class="digit-block">
+          <div class="digit-num d-s">00</div>
+          <div class="digit-lbl">seg</div>
+        </div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:0%"></div>
+        </div>
+        <div class="progress-text">calculando…</div>
+      </div>
+    </div>
+  `;
+
+  card.appendChild(body);
+  setTimeout(() => startCountdown(unlockDate, card), 0);
+  return card;
+}
+
+// ── LOCKED CARD SIMPLE (meses futuros) ──
+function buildFutureLockedCard(num, unlockDate){
+  const ord   = ORDINALS[num-1] || `${num}°`;
+  const mName = MONTH_NAMES[unlockDate.getMonth()];
+  const year  = unlockDate.getFullYear();
+
+  const card = document.createElement('div');
+  card.className = 'locked-card';
+  card.style.animationDelay = `${(num-1)*.1}s`;
+
+  const header = document.createElement('div');
+  header.className = 'locked-header';
+  header.innerHTML = `
+    <div class="locked-badge"><span>${num}</span></div>
+    <div class="locked-header-info">
+      <h3>${ord} mes juntos 💜</h3>
+      <p>19 ${mName} ${year}</p>
+    </div>
+  `;
+  card.appendChild(header);
+
+  const body = document.createElement('div');
+  body.className = 'simple-locked-body';
+  body.innerHTML = `
+    <div class="simple-lock-wrap">
+      <div class="simple-lock-svg">${lockSVGSimple(48)}</div>
+      <p class="simple-locked-text">Este capítulo todavía no está disponible</p>
+      <p class="simple-unlock-date">Se desbloqueará el 19 de ${mName} de ${year}</p>
+    </div>
+  `;
+  card.appendChild(body);
+  return card;
+}
+
+// ── RENDER NOTES ──
+function renderNotes(key, container){
+  const data  = getMonthData(key);
+  const notes = data.notas || [];
+  container.innerHTML = '';
+  if(notes.length===0){
+    container.innerHTML='<p class="notes-empty">Aún no hay notitas… ¡escribe la primera! 🌸</p>';
+    return;
+  }
+  notes.forEach((n,i)=>{
+    const rot  = ROTS[i%ROTS.length];
+    const card = document.createElement('div');
+    card.className='note-card';
+    card.style.cssText=`background:${n.color};transform:rotate(${rot}deg)`;
+    card.innerHTML=`
+      <span class="note-pin">📌</span>
+      <button class="note-del" data-i="${i}">✕</button>
+      <p class="note-text">${n.text.replace(/</g,'&lt;').replace(/\n/g,'<br>')}</p>
+      <span class="note-date">${n.date}</span>
+    `;
+    container.appendChild(card);
+  });
+  container.querySelectorAll('.note-del').forEach(btn=>{
+    btn.onclick=async()=>{
+      if(confirm('¿Eliminar esta notita?')){
+        const d2=getMonthData(key);
+        d2.notas.splice(+btn.dataset.i,1);
+        setMonthData(key,d2);
+        renderNotes(key,container);
+        await putDB();
+      }
+    };
+  });
+}
+
+// ── RENDER PHOTOS ──
+function renderPhotos(key, grid){
+  const data   = getMonthData(key);
+  const photos = data.fotos || [];
+  grid.innerHTML = '';
+  if(photos.length===0){
+    grid.innerHTML='<p class="photos-empty">Sin fotos aún 📷</p>';
+    return;
+  }
+  photos.forEach((p,i)=>{
+    const item = document.createElement('div');
+    item.className='photo-item';
+    const safe=(p.caption||'').replace(/"/g,'&quot;');
+    item.innerHTML=`
+      <img src="${p.url}" alt="foto">
+      <button class="photo-del" data-i="${i}">✕</button>
+      <input class="photo-caption" placeholder="✍️ algo..." value="${safe}" data-i="${i}">
+    `;
+    grid.appendChild(item);
+  });
+  grid.querySelectorAll('.photo-del').forEach(btn=>{
+    btn.onclick=async()=>{
+      if(confirm('¿Eliminar foto?')){
+        const d2=getMonthData(key);
+        d2.fotos.splice(+btn.dataset.i,1);
+        setMonthData(key,d2);
+        renderPhotos(key,grid);
+        await putDB();
+      }
+    };
+  });
+  grid.querySelectorAll('.photo-caption').forEach(inp=>{
+    inp.addEventListener('change',async()=>{
+      const d2=getMonthData(key);
+      d2.fotos[+inp.dataset.i].caption=inp.value;
+      setMonthData(key,d2);
+      await putDB();
+    });
+  });
+}
+
+// ── BUILD UNLOCKED MONTH CARD ──
+function buildMonthCard(num, unlockDate, isNew){
+  const key   = `month_${num}`;
+  const ord   = ORDINALS[num-1] || `${num}°`;
+  const mName = MONTH_NAMES[unlockDate.getMonth()];
+  const year  = unlockDate.getFullYear();
+
+  const card = document.createElement('div');
+  card.className = 'month-card';
+  card.style.animationDelay = `${(num-1)*.1}s`;
+
+  const header = document.createElement('div');
+  header.className = 'month-header';
+  header.innerHTML = `
+    <div class="month-badge"><span>${num}</span></div>
+    <div class="month-info">
+      <h3>${ord} mes juntos 💜</h3>
+      <p>19 ${mName} ${year} · ${num === 1 ? 'el primer capítulo' : 'otro mes de historia'}</p>
+    </div>
+    ${isNew ? '<span class="month-new">🎉 ¡hoy!</span>' : ''}
+  `;
+  card.appendChild(header);
+
+  const body = document.createElement('div');
+  body.className = 'month-body';
+
+  const messages = [
+    "Este tiempo que te he conocido me siento bien a tu lado y siempre voy a estar contigo, pase lo que pase. Eres especial para mí, Angela, y cada día que pasa me alegra más haberte encontrado.",
+    "Dos meses y seguimos escribiendo esta historia juntos. Me alegra tanto tenerte cerca.",
+    "Tres meses y cada día me convenzo más de que esto es algo especial. Tú eres especial.",
+    "Cuatro meses de sonrisas, de momentos bonitos, de sentirme bien a tu lado. Ojalá vengan muchos más.",
+    "Cinco meses y aún me sorprende lo bien que la pasamos juntos. Gracias por todo.",
+    "Seis meses. Medio año contigo, Angela. Cada segundo ha valido la pena.",
+    "Siete meses y sigues siendo lo mejor que me ha pasado. No cambiaría nada.",
+    "Ocho meses juntos y aún me pone feliz saber que estás ahí. Gracias por quedarte.",
+    "Nueve meses y nuestra historia sigue siendo mi favorita de todas.",
+    "Diez meses. No imaginé que algo tan bonito pudiera seguir creciendo así.",
+    "Once meses, Angela. Casi un año de tenerte y aun así se me hace poco.",
+    "Doce meses. Un año entero contigo. Ojalá vengan muchos más capítulos que escribir juntos.",
+  ];
+
+  const msg = messages[num-1] || `${ord} mes juntos y seguimos sumando momentos increíbles.`;
+  body.innerHTML = `<p class="month-msg">"${msg}"</p>`;
+  body.appendChild(buildNotesSection(key));
+  body.appendChild(buildPhotosSection(key));
+  card.appendChild(body);
+  return card;
+}
+
+function buildNotesSection(key){
+  const wrap = document.createElement('div');
+  const title = document.createElement('div');
+  title.className = 'month-notes-title';
+  title.innerHTML = '📌 Notitas del mes';
+  wrap.appendChild(title);
+
+  let selectedColor = NOTE_COLORS[0];
+  const row = document.createElement('div');
+  row.className = 'notes-row';
+
+  const ta = document.createElement('textarea');
+  ta.className = 'notes-textarea';
+  ta.placeholder = 'Escribe una notita para este mes... ✍️';
+  ta.rows = 2;
+  row.appendChild(ta);
+
+  const controls = document.createElement('div');
+  controls.className = 'notes-controls';
+
+  const cp = document.createElement('div');
+  cp.className = 'color-pick';
+  cp.innerHTML = '<span class="color-lbl">color:</span>';
+  NOTE_COLORS.forEach(c=>{
+    const btn = document.createElement('button');
+    btn.className = 'color-dot'+(c===selectedColor?' active':'');
+    btn.style.background = c;
+    btn.onclick = ()=>{
+      selectedColor=c;
+      cp.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));
+      btn.classList.add('active');
+    };
+    cp.appendChild(btn);
+  });
+  controls.appendChild(cp);
+
+  const addBtn = document.createElement('button');
+  addBtn.className = 'add-btn';
+  addBtn.textContent = '＋ Agregar';
+  controls.appendChild(addBtn);
+  row.appendChild(controls);
+  wrap.appendChild(row);
+
+  const board = document.createElement('div');
+  board.className = 'notes-board';
+  wrap.appendChild(board);
+  renderNotes(key, board);
+
+  async function addNote(){
+    const text = ta.value.trim();
+    if(!text){ ta.focus(); return; }
+    addBtn.textContent='Guardando…'; addBtn.disabled=true;
+    const d2 = getMonthData(key);
+    const date = new Date().toLocaleDateString('es-CO',{day:'numeric',month:'short'});
+    d2.notas.unshift({ text, color:selectedColor, date });
+    setMonthData(key, d2);
+    renderNotes(key, board);
+    ta.value=''; ta.focus();
+    await putDB();
+    addBtn.textContent='＋ Agregar'; addBtn.disabled=false;
+  }
+
+  addBtn.onclick = addNote;
+  ta.addEventListener('keydown',e=>{ if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)) addNote(); });
+  return wrap;
+}
+
+function buildPhotosSection(key){
+  const wrap = document.createElement('div');
+  const title = document.createElement('div');
+  title.className = 'month-notes-title';
+  title.innerHTML = '📸 Fotos del mes';
+  wrap.appendChild(title);
+
+  const area = document.createElement('div');
+  area.className = 'upload-area';
+  area.innerHTML = `
+    <input type="file" accept="image/*" multiple class="file-inp">
+    <p class="upload-text">Toca para agregar fotos 📷<br><strong>+ recuerdos de este mes</strong></p>
+  `;
+  wrap.appendChild(area);
+
+  const grid = document.createElement('div');
+  grid.className = 'photo-grid';
+  wrap.appendChild(grid);
+  renderPhotos(key, grid);
+
+  async function handleFiles(files){
+    const arr = Array.from(files).filter(f=>f.type.startsWith('image/'));
+    if(!arr.length) return;
+    area.innerHTML=`<p class="upload-text">⏳ Subiendo ${arr.length} foto(s)…</p>`;
+    try{
+      const results = await Promise.all(arr.map(async f=>({ url:await uploadToImgBB(f), caption:'' })));
+      const d2 = getMonthData(key);
+      d2.fotos = [...results, ...d2.fotos];
+      setMonthData(key, d2);
+      await putDB();
+      renderPhotos(key, grid);
+    }catch(e){ alert('Error al subir 😢'); }
+    area.innerHTML=`
+      <input type="file" accept="image/*" multiple class="file-inp">
+      <p class="upload-text">Toca para agregar fotos 📷<br><strong>+ recuerdos de este mes</strong></p>
+    `;
+    area.querySelector('.file-inp').addEventListener('change',function(){ handleFiles(this.files); this.value=''; });
+  }
+
+  area.querySelector('.file-inp').addEventListener('change',function(){ handleFiles(this.files); this.value=''; });
+  area.addEventListener('dragover',e=>{ e.preventDefault(); area.style.borderColor='var(--violet-lt)'; });
+  area.addEventListener('dragleave',()=>{ area.style.borderColor=''; });
+  area.addEventListener('drop',e=>{ e.preventDefault(); area.style.borderColor=''; handleFiles(e.dataTransfer.files); });
+  return wrap;
+}
+
+// ── MAIN RENDER ──
+async function renderAll(){
+  await getDB();
+  const wrap = document.getElementById('months-wrap');
+  wrap.innerHTML = '';
+
+  const now = new Date();
+  let foundNext = false;
+
+  for(let m = 1; m <= 12; m++){
+    // Mes 1 = 19 abr 2026, Mes 2 = 19 may 2026, ..., Mes 12 = 19 mar 2027
+    const unlockDate = new Date(START);
+    unlockDate.setMonth(START.getMonth() + (m - 1));
+    unlockDate.setDate(19);
+    unlockDate.setHours(0, 0, 0, 0);
+
+    if(now >= unlockDate){
+      // ✅ Desbloqueado
+      const isNew = isToday(unlockDate);
+      wrap.appendChild(buildMonthCard(m, unlockDate, isNew));
+    } else if(!foundNext){
+      // 🔒 Próximo — cuenta regresiva elegante
+      foundNext = true;
+      wrap.appendChild(buildNextLockedCard(m, unlockDate));
+    } else {
+      // 🔒 Futuro — candado simple
+      wrap.appendChild(buildFutureLockedCard(m, unlockDate));
+    }
+  }
+}
+
+renderAll();
+</script>
+</body>
+</html>
