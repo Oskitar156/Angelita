@@ -710,19 +710,33 @@ async function getDB(){
     }
   }catch(e){ console.error(e); }
 }
+// Guarda sin borrar lo que se haya agregado desde otro lado (el celular de Angelita, otro dispositivo…):
+// primero trae lo último de la nube y solo reemplaza los meses que se cambiaron aquí.
+const dirtyKeys = new Set();
 async function putDB(){
   try{
-    await fetch(BIN_URL,{
+    let latest = null;
+    try{
+      const r = await fetch(BIN_URL+'/latest',{ headers:{'X-Master-Key':API_KEY}, cache:'no-store' });
+      if(r.ok){ const j = await r.json(); latest = j.record || null; }
+    }catch(_){}
+    if(latest && latest.notas === undefined && latest.fotos === undefined){
+      dirtyKeys.forEach(k => { latest[k] = db[k]; });
+      db = latest;
+    }
+    const res = await fetch(BIN_URL,{
       method:'PUT',
       headers:{'Content-Type':'application/json','X-Master-Key':API_KEY},
       body: JSON.stringify(db)
     });
+    if(!res.ok) throw new Error('PUT '+res.status);
+    dirtyKeys.clear();
     showToast();
   }catch(e){ showToast('Error al guardar 😢'); }
 }
 
 function getMonthData(key){ return db[key] || { notas:[], fotos:[] }; }
-function setMonthData(key, data){ db[key] = data; }
+function setMonthData(key, data){ db[key] = data; dirtyKeys.add(key); }
 
 // ── IMGBB ──
 async function uploadToImgBB(file){
